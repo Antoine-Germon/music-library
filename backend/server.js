@@ -3,6 +3,7 @@ const YTDlpWrap = require("yt-dlp-wrap").default;
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
+const multer = require("multer");
 
 const app = express();
 
@@ -10,6 +11,8 @@ const app = express();
 app.use(cors());
 
 app.use(express.json());
+
+const upload = multer({ dest: 'uploads/' });
 
 YTDlpWrap.downloadFromGithub("downloads/yt-dlp-binaries", "2024.12.13")
     .then(() => {
@@ -76,10 +79,13 @@ app.post("/api/download", async (req, res) => {
         // Répond avec les informations du téléchargement
         res.json({
             success: true,
-            audioPath: `/media/${videoTitle}/${videoTitle}.mp3`,
-            thumbnailPath: `/media/${videoTitle}/${videoTitle}.jpg`,
+            audioPath: `/media/${sanitizedTitle}/${sanitizedTitle}.mp3`,
+            thumbnailPath: `/media/${sanitizedTitle}/${sanitizedTitle}.jpg`,
             title: videoTitle,
         });
+
+        // write title to file
+        fs.writeFileSync(path.join(songFolder, "title.txt"), videoTitle);
     } catch (error) {
         console.error("Erreur lors du téléchargement :", error);
         res.status(500).json({ success: false, error: error.message });
@@ -89,31 +95,27 @@ app.post("/api/download", async (req, res) => {
 // Servir les fichiers téléchargés
 app.use("/media", express.static(path.resolve(__dirname, "../assets/media")));
 
-app.get("/api/songs", (req, res) => {
-    try {
-        const songs = fs.readdirSync(MEDIA_DIR).map((songFolder) => {
-            const songPath = path.join(MEDIA_DIR, songFolder);
-            const files = fs.readdirSync(songPath);
-
-            const mp3File = files.find((file) => file.endsWith(".mp3"));
-            const thumbnailFile = files.find((file) => file.endsWith(".jpg"));
-
-            if (mp3File && thumbnailFile) {
-                return {
-                    title: songFolder,
-                    audio: `/media/${songFolder}/${mp3File}`,
-                    thumbnail: `/media/${songFolder}/${thumbnailFile}`,
-                };
-            }
-
-            return null;
-        });
-
-        res.json(songs.filter(Boolean)); // Filter out invalid entries
-    } catch (error) {
-        console.error("Error listing songs:", error);
-        res.status(500).json({ error: "Failed to fetch songs." });
+app.post("/api/upload", upload.single('croppedImage'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded." });
     }
+
+    // Move the file to the desired location
+    let targetPath = path.join(MEDIA_DIR, req.file.originalname);
+
+    targetPath = targetPath.slice(0, targetPath.lastIndexOf(".")) + "/" + targetPath.slice(0, targetPath.lastIndexOf(".")) + ".jpg";
+
+    fs.rename(req.file.path, targetPath, (err) => {
+        if (err) {
+            return res.status(500).json({ error: "Failed to save file." });
+        }
+
+        res.json({ success: true, filePath: `/media/${req.file.originalname}` });
+    });
+});
+
+app.post("/api/upload", async (req, res) => {
+    res.json(req)
 });
 
 // Démarrer le serveur

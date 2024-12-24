@@ -1,12 +1,22 @@
 
 import './App.css'
-import SongPage from './components/SongPage/SongPage'
+
+import NavBar from './components/NavBar/NavBar'
+import { Outlet } from 'react-router-dom'
 
 function App() {
 
   return (
     <>
-      <SongPage />
+      <NavBar />
+
+      <main>
+        <Outlet />
+      </main>
+      
+      <footer>
+        <p>AAAAAAAAAAAAAAAAAAAAAA</p>
+      </footer>
     </>
   )
 }

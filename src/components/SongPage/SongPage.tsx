@@ -2,6 +2,9 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 
+import { Form, Outlet, useLoaderData, useNavigation } from 'react-router-dom';
+import { NavLinkWithQuery } from '@/linkWithQuery';
+
 import "./SongPage.css";
 import { EffectCoverflow } from "swiper/modules";
 import { useEffect, useState } from "react";
@@ -12,22 +15,27 @@ type Song = {
     thumbnail: string;
 };
 
-function SongPage() {
-    const [songs, setSongs] = useState<Song[]>([]);
-    const [currentSong, setCurrentSong] = useState<Song | null>(null);
+export function loader() {
+    return fetch("http://localhost:5000/api/songs",
+        {
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        }
+    )
+        .then((res) => res.json())
+        .then((data) => {
+            console.log("Fetched songs:", data);
+            return data;
+        })
+        .catch((error) => console.error("Error fetching songs:", error));
+}
 
-    useEffect(() => {
-        fetch("http://localhost:5000/api/songs")
-            .then((res) => res.json())
-            .then((data) => {
-                console.log("Fetched songs:", data);
-                setSongs(data);
-                if (data.length > 0) {
-                    setCurrentSong(data[0]);
-                }
-            })
-            .catch((error) => console.error("Error fetching songs:", error));
-    }, []);
+function SongPage() {
+    const songs = useLoaderData() as Song[];
+
+    const [currentSong, setCurrentSong] = useState<Song | null>(null);
 
     return (
         <>
