@@ -15,6 +15,8 @@ dist-ssr
 assets
 !src/assets
 
+backend/uploads
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

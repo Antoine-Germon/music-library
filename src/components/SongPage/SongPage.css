@@ -8,6 +8,10 @@
     height: var(--size) !important;
 }
 
+.swiper-slide {
+    z-index: 1;
+}
+
 .song-swiper .swiper-slide img {
     /* crop yt thumbnail to remove left and right borders */
 

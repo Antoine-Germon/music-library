@@ -103,19 +103,34 @@ app.post("/api/upload", upload.single('croppedImage'), (req, res) => {
     // Move the file to the desired location
     let targetPath = path.join(MEDIA_DIR, req.file.originalname);
 
-    targetPath = targetPath.slice(0, targetPath.lastIndexOf(".")) + "/" + targetPath.slice(0, targetPath.lastIndexOf(".")) + ".jpg";
+    console.log("targetPath", targetPath);
+
+    targetPath = targetPath.slice(0, targetPath.lastIndexOf(".")) + "/" + req.file.originalname.slice(0, req.file.originalname.lastIndexOf(".")) + ".jpg";
 
     fs.rename(req.file.path, targetPath, (err) => {
         if (err) {
-            return res.status(500).json({ error: "Failed to save file." });
+            return res.status(500).json({ error: "Failed to save file.", from: req.file.path, to: targetPath, media_dir: MEDIA_DIR, req_file: req.file.originalname });
         }
 
         res.json({ success: true, filePath: `/media/${req.file.originalname}` });
     });
 });
 
-app.post("/api/upload", async (req, res) => {
-    res.json(req)
+app.get("/api/songs", (req, res) => {
+    const songs = fs.readdirSync(MEDIA_DIR, { withFileTypes: true })
+        .filter((dirent) => dirent.isDirectory())
+        .map((dirent) => {
+            const titlePath = path.join(MEDIA_DIR, dirent.name, "title.txt");
+            const title = fs.existsSync(titlePath) ? fs.readFileSync(titlePath, "utf-8") : dirent.name;
+
+            return {
+                title,
+                audioPath: `/media/${dirent.name}/${dirent.name}.mp3`,
+                thumbnailPath: `/media/${dirent.name}/${dirent.name}.jpg`,
+            };
+        });
+
+    res.json(songs);
 });
 
 // Démarrer le serveur
