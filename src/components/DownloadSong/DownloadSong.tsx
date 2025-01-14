@@ -21,8 +21,8 @@ function DownloadSong() {
                     method: 'POST',
                     body: formData,
                 }).then(res => res.json()).then(data => {
-                    /* setImage("#");
-                    setOriginalImageName(null); */
+                    console.log(data);
+                    setImage(null);
                 });
             });
         }
@@ -52,22 +52,26 @@ function DownloadSong() {
                     setImage(`http://localhost:5000${data.thumbnailPath}`);
                 });
             }}>Download</button>
-            <Cropper
-                src={image ?? "#"}
-                ref={cropperRef}
-                aspectRatio={1}
-                style={{ height: 400, width: "100%" }}
-                zoomTo={0.5}
-                initialAspectRatio={1}
-                viewMode={1}
-                minCropBoxHeight={10}
-                minCropBoxWidth={10}
-                background={false}
-                responsive={true}
-                autoCropArea={1}
-                checkOrientation={false} // https://github.com/fengyuanchen/cropperjs/issues/671
-                guides={true}
-            />
+
+            {
+                image &&
+                <Cropper
+                    src={image ?? "#"}
+                    ref={cropperRef}
+                    aspectRatio={1}
+                    style={{ height: 400, width: "100%" }}
+                    zoomTo={0.5}
+                    initialAspectRatio={1}
+                    viewMode={1}
+                    minCropBoxHeight={10}
+                    minCropBoxWidth={10}
+                    background={false}
+                    responsive={true}
+                    autoCropArea={1}
+                    checkOrientation={false} // https://github.com/fengyuanchen/cropperjs/issues/671
+                    guides={true}
+                />
+            }
             <button style={{ float: "right" }} onClick={saveCropData}>
               Save
             </button>
