@@ -12,6 +12,7 @@
     --icon-size: 15rem;
     height: var(--icon-size);
     z-index: 1;
+    position: relative;
 }
 
 .swiper-slide {

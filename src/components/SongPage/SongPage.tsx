@@ -2,13 +2,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 
-import { Form, Outlet, useLoaderData, useNavigation } from 'react-router-dom';
-import { NavLinkWithQuery } from '@/linkWithQuery';
+import { useLoaderData } from 'react-router-dom';
 
 import "./SongPage.css";
 import { EffectCoverflow } from "swiper/modules";
 import { useEffect, useRef, useState } from "react";
-import GradientBackground from "../GradientBackground/GradientBackground";
 
 type Song = {
     title: string;
