@@ -8,6 +8,7 @@ import { NavLinkWithQuery } from '@/linkWithQuery';
 import "./SongPage.css";
 import { EffectCoverflow } from "swiper/modules";
 import { useEffect, useRef, useState } from "react";
+import GradientBackground from "../GradientBackground/GradientBackground";
 
 type Song = {
     title: string;
@@ -34,7 +35,11 @@ export function loader() {
 
 function SongPage() {
     const songs = useLoaderData() as Song[];
-    const [currentSong, setCurrentSong] = useState<Song | null>(null);
+    const [currentSong, setCurrentSong] = useState<Song>({
+        title: "",
+        audioPath: "",
+        thumbnailPath: "",
+    });
 
     // Refs for controlling the <audio> element and Swiper instance
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -63,8 +68,14 @@ function SongPage() {
         }
     };
 
+    useEffect(() => {
+        if (songs.length > 0) {
+            setCurrentSong(songs[0]);
+        }
+    }, [songs]);
+
     return (
-        <>
+        <div className="song-page">
             <Swiper
                 effect={"coverflow"}
                 grabCursor={true}
@@ -72,7 +83,7 @@ function SongPage() {
                 slidesPerView={"auto"}
                 spaceBetween={100}
                 coverflowEffect={{
-                    rotate: 25,
+                    rotate: 20,
                     stretch: 0,
                     depth: 100,
                     modifier: 1,
@@ -99,19 +110,19 @@ function SongPage() {
                 ))}
             </Swiper>
 
-            {currentSong && (
-                <div className="current-song">
-                    <p>{currentSong.title}</p>
-                    <audio controls ref={audioRef}>
-                        <source
-                            src={`http://localhost:5000${currentSong.audioPath}`}
-                            type="audio/mpeg"
-                        />
-                        Your browser does not support the audio element.
-                    </audio>
-                </div>
-            )}
-        </>
+            <div className="current-song">
+                <p>{currentSong.title}</p>
+                <audio controls ref={audioRef}>
+                    <source
+                        src={
+                            currentSong.audioPath ? `http://localhost:5000${currentSong.audioPath}` : "#"
+                        }
+                        type="audio/mpeg"
+                    />
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </div>
     );
 }
 

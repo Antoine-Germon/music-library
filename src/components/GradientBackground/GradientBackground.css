@@ -1,0 +1,93 @@
+*:has(> .gradient-background) {
+    position: relative;
+}
+
+.gradient-background {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    background-color: lightsalmon;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+@property --angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+}
+
+@property --start-at {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 0%;
+}
+.background1 {
+    background: linear-gradient(
+            var(--angle),
+            rgba(0, 0, 0, 0),
+            mediumblue var(--start-at)
+        ),
+        url(noise.svg);
+    --angle: 110deg;
+    --start-at: 170%;
+    filter: contrast(200%) brightness(200%);
+    transition: --angle 2s ease-in-out, --start-at 2s ease-in-out,
+        filter 2s ease-in-out;
+    animation: oscillate 11s linear infinite;
+}
+
+.background2 {
+    background: linear-gradient(110deg, rgb(169, 132, 255), rgb(66, 0, 61));
+    mix-blend-mode: multiply;
+}
+
+.test1 {
+    opacity: 0;
+    filter: contrast(100%) brightness(100%);
+}
+
+@keyframes oscillate {
+    0% {
+        --angle: 110deg;
+        --start-at: 170%;
+        filter: contrast(125%) brightness(110%);
+    }
+    20% {
+        --angle: 90deg;
+        --start-at: 150%;
+        filter: contrast(125%) brightness(175%);
+    }
+    40% {
+        --angle: 70deg;
+        --start-at: 130%;
+        filter: contrast(105%) brightness(110%);
+    }
+    60% {
+        --angle: 50deg;
+        --start-at: 110%;
+        filter: contrast(150%) brightness(150%);
+    }
+    80% {
+        --angle: 70deg;
+        --start-at: 130%;
+        filter: contrast(100%) brightness(100%);
+    }
+    100% {
+        --angle: 110deg;
+        --start-at: 170%;
+        filter: contrast(135%) brightness(120%);
+    }
+}
