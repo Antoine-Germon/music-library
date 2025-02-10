@@ -79,7 +79,7 @@ function SongPage() {
                 grabCursor={true}
                 centeredSlides={true}
                 slidesPerView={"auto"}
-                spaceBetween={100}
+                spaceBetween={-50}
                 coverflowEffect={{
                     rotate: 20,
                     stretch: 0,
